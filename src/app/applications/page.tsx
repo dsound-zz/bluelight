@@ -15,8 +15,9 @@ const statusBadge: Record<string, string> = {
 };
 
 function resumeLabel(key: string | null): string {
-  if (!key || key === "none") return key === "none" ? "None" : "—";
-  return RESUMES[key as "support" | "solutions"]?.label ?? key;
+  if (!key) return "—";
+  if (key === "none") return "None";
+  return RESUMES[key as "support" | "solutions" | "sde" | "ai_sde"]?.label ?? key;
 }
 
 export default async function ApplicationsPage({

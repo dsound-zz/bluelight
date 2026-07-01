@@ -1,6 +1,6 @@
 import { pgTable, serial, text, boolean, timestamp, pgEnum } from "drizzle-orm/pg-core";
 
-export const resumeEnum = pgEnum("resume_choice", ["support", "solutions", "none"]);
+export const resumeEnum = pgEnum("resume_choice", ["support", "solutions", "sde", "ai_sde", "none"]);
 export const statusEnum = pgEnum("status", ["green", "yellow", "red"]);
 
 export const applications = pgTable("applications", {

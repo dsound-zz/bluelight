@@ -44,9 +44,9 @@ export function parseMessages(jobText: string) {
   return [
     {
       role: "system" as const,
-      content: `You extract structured data from job descriptions and recommend which of the candidate's two resumes fits best. Respond with a single JSON object and nothing else.
+      content: `You extract structured data from job descriptions and recommend which of the candidate's four resumes fits best. Respond with a single JSON object and nothing else.
 
-The candidate has two resumes:
+The candidate has four resumes:
 
 ${resumeOptionsSummary()}`,
     },
@@ -56,14 +56,22 @@ ${resumeOptionsSummary()}`,
 {
   "companyName": string,   // best guess of the hiring company, "" if unknown
   "roleTitle": string,     // "" if unknown
-  "resumeRecommendation": "support" | "solutions" | "none",
+  "resumeRecommendation": "support" | "solutions" | "sde" | "ai_sde" | "none",
   "resumeReason": string   // 2-3 sentences citing the specific signal in the JD that drove the choice
 }
 
-Recommend "none" only for a clear mismatch: a licensed profession, a role requiring years of
+CRITICAL: judge by the work the role actually describes, not by the title. A role titled
+"Solutions Engineer" or "Solutions Architect" that spends its bullets on hands-on system design,
+backend services, or React/TypeScript engineering is really an SDE role and should get "sde"
+(or "ai_sde" if the work centers on AI/LLM systems). Only pick "solutions" when the role is
+genuinely client-facing (demos, onboarding, requirements gathering, stakeholder translation).
+Similarly, a "Research" or "Research Engineer" title whose actual work is applied AI/ML
+engineering (RAG, agentic systems, LLM integration) should get "ai_sde", not "none".
+
+Recommend "none" only for a true mismatch: a licensed profession, a role requiring years of
 experience far beyond a bootcamp-trained engineer with roughly 4-5 years of professional
-experience, or a fully unrelated technical domain (embedded systems, hardware, etc). Otherwise
-pick whichever of "support" or "solutions" fits better.
+experience, or a fully unrelated technical domain (embedded/hardware/firmware, radiation-hardened
+systems, etc). If any of the four resumes plausibly fits, pick one, do not default to "none".
 
 Job description:
 """

@@ -13,9 +13,9 @@ const bodySchema = z.object({
   roleTitle: z.string(),
   jobText: z.string(),
   jobUrl: z.string().optional(),
-  resumeRecommendation: z.enum(["support", "solutions", "none"]),
+  resumeRecommendation: z.enum(["support", "solutions", "sde", "ai_sde", "none"]),
   resumeReason: z.string().default(""),
-  resumeUsed: z.enum(["support", "solutions", "none"]),
+  resumeUsed: z.enum(["support", "solutions", "sde", "ai_sde", "none"]),
   status: z.enum(["green", "yellow", "red"]),
 });
 

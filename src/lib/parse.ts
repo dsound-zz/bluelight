@@ -5,7 +5,7 @@ import { parseMessages, sanitizeCopy } from "./prompts";
 const parsedSchema = z.object({
   companyName: z.string().default(""),
   roleTitle: z.string().default(""),
-  resumeRecommendation: z.enum(["support", "solutions", "none"]),
+  resumeRecommendation: z.enum(["support", "solutions", "sde", "ai_sde", "none"]),
   resumeReason: z.string().default(""),
 });
 export type ParsedJob = z.infer<typeof parsedSchema>;

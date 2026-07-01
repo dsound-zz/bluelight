@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { CopyCard } from "@/components/CopyCard";
 
-type ResumeKey = "support" | "solutions" | "none";
+type ResumeKey = "support" | "solutions" | "sde" | "ai_sde" | "none";
 
 type DuplicateMatch = {
   roleTitle: string;
@@ -33,7 +33,16 @@ type SavedApplication = {
 const resumeLabel: Record<ResumeKey, string> = {
   support: "Technical Support Resume",
   solutions: "Solutions Engineer Resume",
+  sde: "Fullstack SDE Resume",
+  ai_sde: "AI-Focused SDE Resume",
   none: "Neither, likely mismatch",
+};
+
+const resumeShortLabel: Record<Exclude<ResumeKey, "none">, string> = {
+  support: "Support",
+  solutions: "Solutions",
+  sde: "SDE",
+  ai_sde: "AI SDE",
 };
 
 const statusMeta = {
@@ -228,17 +237,18 @@ export default function HomePage() {
               <span className="text-xs font-semibold uppercase tracking-wide text-slate-400">
                 Resume to use
               </span>
-              <div className="mt-2 inline-flex rounded-lg border border-slate-200 p-0.5 text-sm">
-                {(["support", "solutions"] as const).map((k) => (
+              <div className="mt-2 inline-flex flex-wrap rounded-lg border border-slate-200 p-0.5 text-sm">
+                {(["support", "solutions", "sde", "ai_sde"] as const).map((k) => (
                   <button
                     key={k}
                     onClick={() => setResumeUsed(k)}
                     disabled={!!saved}
+                    title={resumeLabel[k]}
                     className={`rounded-md px-3 py-1.5 font-medium transition disabled:opacity-50 ${
                       resumeUsed === k ? "bg-slate-900 text-white" : "text-slate-600 hover:bg-slate-100"
                     }`}
                   >
-                    {resumeLabel[k]}
+                    {resumeShortLabel[k]}
                   </button>
                 ))}
               </div>

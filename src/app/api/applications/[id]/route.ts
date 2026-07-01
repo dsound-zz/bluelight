@@ -11,7 +11,7 @@ export const maxDuration = 60;
 
 const bodySchema = z.object({
   status: z.enum(["green", "yellow", "red"]),
-  resumeUsed: z.enum(["support", "solutions"]).optional(),
+  resumeUsed: z.enum(["support", "solutions", "sde", "ai_sde"]).optional(),
 });
 
 export async function PATCH(request: Request, ctx: { params: Promise<{ id: string }> }) {
