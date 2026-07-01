@@ -1,4 +1,4 @@
-import { sql } from "drizzle-orm";
+import { desc } from "drizzle-orm";
 import { db } from "@/db";
 import { applications } from "@/db/schema";
 
@@ -10,8 +10,10 @@ export type DuplicateMatch = {
 
 // Simple case-insensitive substring match on company_name against existing rows.
 // Informational only: never blocks, never changes the resume recommendation.
+// Matching happens in JS (not a SQL LIKE) so a blank stored company_name, which the parse
+// step can produce when it fails to extract one, can never trivially match everything.
 export async function checkDuplicate(companyName: string): Promise<DuplicateMatch[]> {
-  const name = companyName.trim();
+  const name = companyName.trim().toLowerCase();
   if (!name) return [];
 
   const rows = await db
@@ -22,15 +24,16 @@ export async function checkDuplicate(companyName: string): Promise<DuplicateMatc
       appliedAt: applications.appliedAt,
     })
     .from(applications)
-    .where(
-      sql`lower(${applications.companyName}) like ${"%" + name.toLowerCase() + "%"}
-          or ${name.toLowerCase()} like '%' || lower(${applications.companyName}) || '%'`,
-    )
-    .orderBy(sql`${applications.createdAt} desc`);
+    .orderBy(desc(applications.createdAt));
 
-  return rows.map((r) => ({
-    roleTitle: r.roleTitle,
-    status: r.status,
-    appliedAt: r.appliedAt ? new Date(r.appliedAt).toISOString().slice(0, 10) : null,
-  }));
+  return rows
+    .filter((r) => {
+      const other = r.companyName.trim().toLowerCase();
+      return other.length > 0 && (other.includes(name) || name.includes(other));
+    })
+    .map((r) => ({
+      roleTitle: r.roleTitle,
+      status: r.status,
+      appliedAt: r.appliedAt ? new Date(r.appliedAt).toISOString().slice(0, 10) : null,
+    }));
 }
